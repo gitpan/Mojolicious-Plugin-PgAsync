@@ -4,6 +4,8 @@ use Mojo::Base -base;
 use Data::Dumper;
 use Mojolicious::Plugin::PgAsync::Db;
 
+our $VERSION = '0.01';
+
 has ioloop => sub { Mojo::IOLoop->singleton };
 has [qw/ dbi ttl /];
 has [qw/ db_free /] => sub {[]};

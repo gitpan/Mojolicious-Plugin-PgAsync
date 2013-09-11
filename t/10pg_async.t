@@ -8,9 +8,12 @@ use Time::HiRes 'sleep';
 use lib 'lib';
 
 my $wait = 1;
+my $dsn		= $ENV{DBI_DSN}		|| 'dbi:Pg:dbname=postgres';
+my $user	= $ENV{DBI_USER}	|| 'postgres';
+my $pass	= $ENV{DBI_PASS}	|| '';
 
 plugin PgAsync => {
-	dbi	=> ['dbi:Pg:dbname=postgres', 'postgres', '', {AutoCommit => 0, RaiseError => 1}],
+	dbi	=> [$dsn, $user, $pass, {AutoCommit => 0, RaiseError => 1}],
 	ttl	=> 0.5,
 };
 

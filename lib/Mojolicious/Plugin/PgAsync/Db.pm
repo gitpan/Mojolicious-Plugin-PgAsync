@@ -5,6 +5,8 @@ use IO::Handle;
 use DBD::Pg ':async';
 use Data::Dumper;
 
+our $VERSION = '0.01';
+
 our $debug = $ENV{DEBUG_PG};
 
 has [qw/ dbi sth handle make_free /];

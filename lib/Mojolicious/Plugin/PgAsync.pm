@@ -5,7 +5,7 @@ use DBD::Pg ':async';
 use Data::Dumper;
 use Mojolicious::Plugin::PgAsync::Pool;
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 has ttl => 30;
 has pool => sub { Mojolicious::Plugin::PgAsync::Pool->new };
@@ -55,7 +55,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asyncronius work with PostgreSQL
+Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asynchronous work with PostgreSQL
 
 =head1 SYNOPSIS
 
@@ -74,8 +74,8 @@ Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asyncronius work with Post
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::PgAsync> is a plugin for Mojolicious apps to work asyncronous with PostgreSQL
-using L<DBD::Pg>. Plugin uses own connections pool.
+L<Mojolicious::Plugin::PgAsync> is a plugin for Mojolicious apps to work asynchronous with PostgreSQL
+using L<DBD::Pg>, include I<listen> feature. Plugin uses own connections pool.
 
 =head1 HELPERS
 
