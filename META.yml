@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Mojolicious-Plugin-PgAsync
-version:            0.02
+version:            0.03
 abstract:           ~
 author:
     - Alexander Romanenko <romanenko@cpan.org>
@@ -11,8 +11,8 @@ configure_requires:
 build_requires:
     ExtUtils::MakeMaker:  0
 requires:
-    DBD::Pg:      2.19.0
-    Mojolicious:  4.30
+    DBD::Pg:      0
+    Mojolicious:  0
 no_index:
     directory:
         - t

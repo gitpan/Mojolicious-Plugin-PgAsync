@@ -5,7 +5,7 @@ use DBD::Pg ':async';
 use Data::Dumper;
 use Mojolicious::Plugin::PgAsync::Pool;
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 has ttl => 30;
 has pool => sub { Mojolicious::Plugin::PgAsync::Pool->new };
@@ -55,7 +55,7 @@ __END__
 
 =head1 NAME
 
-Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asynchronous work with PostgreSQL
+Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asynchronous operation with PostgreSQL
 
 =head1 SYNOPSIS
 
@@ -74,18 +74,18 @@ Mojolicious::Plugin::PgAsync - Mojolicious Plugin for asynchronous work with Pos
 
 =head1 DESCRIPTION
 
-L<Mojolicious::Plugin::PgAsync> is a plugin for Mojolicious apps to work asynchronous with PostgreSQL
-using L<DBD::Pg>, include I<listen> feature. Plugin uses own connections pool.
+L<Mojolicious::Plugin::PgAsync> is a plugin for Mojolicious apps for asynchronous operation (non-blocking)
+with PostgreSQL using L<DBD::Pg>, include I<listen> feature. Plugin uses own connections pool.
 
 =head1 HELPERS
 
-L<Mojolicious::Plugin::PgAsync> contains two helpers: I<pg> and I<pg_listen>.
+L<Mojolicious::Plugin::PgAsync> contains two helpers: C<pg> and C<pg_listen>.
 
 =head2 C<pg>
 
-Like L<DBI> method L<DBI#do> or L<DBI#selectall_arrayref> execute a single statement. Callback return
-object Mojolicious::Plugin::PgAsync::Db contains methods I<dbh> and I<sth> for fetch result or commit
-transaction.
+Like L<DBI> method L<do|DBI#do> or L<selectall_arrayref|DBI#selectall_arrayref> execute a single statement.
+Callback return object Mojolicious::Plugin::PgAsync::Db contains methods C<dbh> and C<sth> for fetch result
+or commit transaction.
 
 	$self->pg('UPDATE test SET name=?', undef, 'foo',
 		sub {
@@ -118,9 +118,55 @@ Arrayref of L<DBI> parameters for connect to PostgreSQL DB.
 
 Time to life for idle connections, seconds. Default - 30.
 
+=head1 EXAMPLE
+
+After 2 seconds print I<listen foo bar>
+
+	plugin PgAsync => {dbi => ['dbi:Pg:dbname=test', 'postgres', '', {AutoCommit => 0, RaiseError => 1}]};
+
+	get '/listen' => sub {
+		my $self = shift->render_later;
+
+		Mojo::IOLoop->delay(
+			sub {
+				my $delay = shift;
+
+				$self->pg_listen('foo', $delay->begin);
+				$self->pg_listen('bar', $delay->begin);
+			},
+			sub {
+				my $delay = shift;
+				my($notify1, $notify2) = @_;
+
+				$self->render(text => "listen $notify1->{name} $notify2->{name}");
+			},
+		);
+
+		Mojo::IOLoop->delay(
+			sub {
+				my $delay = shift;
+
+				Mojo::IOLoop->timer(2 => $delay->begin);
+			},
+			sub {
+				my $delay = shift;
+
+				$self->pg(q/SELECT pg_notify('foo')/, $delay->begin);
+				$self->pg(q/SELECT pg_notify('bar')/, $delay->begin);
+			},
+			sub {
+				my $delay = shift;
+				my($db1, $db2) = @_;
+
+				$db1->dbh->commit;
+				$db2->dbh->commit;
+			},
+		);
+	};
+
 =head1 AUTHOR
 
-Alexander Romanenko <romanenko@cpan.org>
+Alexander Romanenko romanenko@cpan.org
 
 =head1 COPYRIGHT & LICENSE
 

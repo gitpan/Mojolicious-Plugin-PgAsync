@@ -5,12 +5,19 @@ use Mojolicious::Lite;
 use Test::Mojo;
 use Data::Dumper;
 use Time::HiRes 'sleep';
+use DBI;
 use lib 'lib';
 
 my $wait = 1;
-my $dsn		= $ENV{DBI_DSN}		|| 'dbi:Pg:dbname=postgres';
+my $dsn		= $ENV{DBI_DSN}		|| 'dbi:Pg:dbname=test';
 my $user	= $ENV{DBI_USER}	|| 'postgres';
 my $pass	= $ENV{DBI_PASS}	|| '';
+
+# If can't connect skip tests
+DBI->connect($dsn, $user, $pass)
+	or plan skip_all => sprintf 'Cannot connect to DB <%s>, <%s>, <%s>',
+		$dsn, $user, $pass;
+
 
 plugin PgAsync => {
 	dbi	=> [$dsn, $user, $pass, {AutoCommit => 0, RaiseError => 1}],
@@ -189,9 +196,11 @@ get '/7' => sub {
 		},
 	);
 
-	sleep 0.2;
-
 	Mojo::IOLoop->delay(
+		sub {
+			my $delay = shift;
+			Mojo::IOLoop->timer(0.2 => $delay->begin);
+		},
 		sub {
 			my $delay = shift;
 			$self->pg(q/SELECT pg_notify('foo7','pl foo 7')/, $delay->begin);

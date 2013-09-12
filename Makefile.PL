@@ -8,8 +8,8 @@ WriteMakefile(
   VERSION_FROM => 'lib/Mojolicious/Plugin/PgAsync.pm',
   AUTHOR       => 'Alexander Romanenko <romanenko@cpan.org>',
   PREREQ_PM    => {
-	  				'Mojolicious' => '4.30',
-					'DBD::Pg' => '2.19.0',
+	  				'Mojolicious' => '0',
+					'DBD::Pg' => '0',
 				},
   test         => {TESTS => 't/*.t'}
 );

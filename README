@@ -1,8 +1,8 @@
 DESCRIPTION:
 ------------
-                                                                                                     
-Mojolicious::Plugin::PgAsync is a plugin for Mojolicious apps to work asynchronous with PostgreSQL
-using DBD::Pg, include listen feature.
+
+Mojolicious::Plugin::PgAsync is a plugin for Mojolicious apps for asynchronous operation (non-blocking)
+with PostgreSQL using DBD::Pg, include listen feature.
 
 TESTING:
 --------
@@ -15,3 +15,8 @@ The easiest way to ensure this is to set the following environment variables:
 	DBI_PASS=<password>
 
 Default: database - "test", username - "postgres", password - "".
+
+AUTHOR:
+-------
+
+Alexander Romanenko romanenko@cpan.org
